@@ -4,6 +4,10 @@ import CardDetail from './CardDetail';
 import axios from "axios";
 import { AddRounded, AddToPhotosRounded } from '@material-ui/icons';
 import { Button } from '@material-ui/core';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+// For CSS i have used styled component library.
 const Cardcontainer = styled.div`
     width:80%;
     margin: 10px auto;
@@ -58,9 +62,9 @@ const AddAlbum = styled.div`
 `;
 
 const Myalbums = () => {
-    const [albumdetail,setAlbumdetail]=useState({});
-    const [openAdd,setOpenAdd]=useState(false);
-    const[addtitlevalue,setAddtitlevalue]=useState("");
+    const [albumdetail,setAlbumdetail]=useState({});//This is used for storing json data.
+    const [openAdd,setOpenAdd]=useState(false);// This is used for adding a new entry.
+    const[addtitlevalue,setAddtitlevalue]=useState("");// This is used for storing a new entry .
 
     // API call for get all details
     useEffect(()=>{
@@ -88,6 +92,7 @@ const Myalbums = () => {
         getAlbum();
     },[]);
 
+    // Adding new Album entry.
     const handAddAlbum = async ()=>{
         let lastuserid = Object.keys(albumdetail).pop();
         if(lastuserid){
@@ -102,7 +107,7 @@ const Myalbums = () => {
 
         try {
             const res = await axios.post("https://jsonplaceholder.typicode.com/albums",newAlbum)
-            console.log(res.data);
+            // console.log(res.data);
             const createdAlbum = res.data;
 
            
@@ -116,19 +121,11 @@ const Myalbums = () => {
                 return updatedAlbumdetail;
 
             });
-            // Check the user ID of the last entry
-            // const lastUserId = createdAlbum.userId;
-
-            // console.log('New Album:', createdAlbum);
-            // console.log('Last User ID:', lastUserId);
+            toast.success('Successfully Added!!!!');
         } catch (error) {
-            
+            toast.error('Something error to add!!!');
         }
-
-            // Reset the input field
             setAddtitlevalue('');
-
-            // Close the add album section
             setOpenAdd(false);
     }
     
@@ -136,7 +133,6 @@ const Myalbums = () => {
     <>
         <Cardcontainer>
             {Object.keys(albumdetail).map((userid)=>
-                // console.log(albumdetail[userid])
                 <Card key={userid}>
                     <CardDetail albumData={albumdetail[userid]}/>    
                 </Card>
@@ -147,6 +143,7 @@ const Myalbums = () => {
                     <AddToPhotosRounded style={{width:"90%", height:"50%"}} ></AddToPhotosRounded>
                     <Button variant='contained' onClick={()=>setOpenAdd(true)} >Add</Button>
                 </AddAlbum>
+                <ToastContainer />
                 </>}
                 
 

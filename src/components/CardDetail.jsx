@@ -5,6 +5,8 @@ import { ChevronLeftOutlined, ChevronRightOutlined, KeyboardArrowRightOutlined }
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+// For CSS i have used styled component library.
 const AlbumContainer=styled.div`
     width: 100%;
     height: 100%;
@@ -29,11 +31,11 @@ const Arrow = styled.div`
     justify-content: space-between;
 `;
 const CardDetail = ({albumData}) => {
-    // const albumDetail = albumData;
-    const [album,setAlbum]=useState(albumData);
-    const [albumItem,setAlbumItem]=useState(0);
-    const [openEdit,setOpenEdit]=useState(false);
-    const [upadatevalueView, setupadatevalueView]=useState("");
+
+    const [album,setAlbum]=useState(albumData);//Store albumdata to album.
+    const [albumItem,setAlbumItem]=useState(0);//This is used of geting proper data on 0th posistion.
+    const [openEdit,setOpenEdit]=useState(false);// This is used for flag for opening a edit section.
+    const [upadatevalueView, setupadatevalueView]=useState("");// This is used for store edit value.
     // console.log(albumData[albumItem]);
 
      //This function is used for get particular back data
@@ -45,12 +47,13 @@ const CardDetail = ({albumData}) => {
         setAlbumItem(albumItem===album.length-1?0:(prev)=>prev+1);
     }
 
+    // Handling for edit click
     const handleEdit =(data)=>{
         setupadatevalueView(data);
         setOpenEdit(true);
     }
     
-
+    // Storing a data on onchange function of edit tools
     const handleTextFieldChange = (e) => {
         setupadatevalueView(e.target.value);
       };
@@ -64,24 +67,27 @@ const CardDetail = ({albumData}) => {
                 ...album[albumItem],
                 title:upadatevalueView,
             };
+
             const res = await axios.put(`https://jsonplaceholder.typicode.com/albums/${id}`,updatedAlbum);
-            // console.log(res.data);
+            console.log(res.data);
 
             setAlbum((prevAlbum)=>{
                 const updateAlbums=[...prevAlbum];
                 updateAlbums[albumItem]=res.data;
                 return updateAlbums;
             });
-            toast.success('Successfully Updated!!!!!');
+            toast.success('Successfully Updated!!!!!'); // This is used for notify a user
             setOpenEdit(false);
         } catch (error) {
+            console.log(error);
             toast.error('Something error to update!!!')
         }
         
       }
+
       // Delete call api handleDelete
       const handleDelete= async (id)=>{
-        // console.log(id);
+        ;
         try {
           const res=  await axios.delete(`https://jsonplaceholder.typicode.com/albums/${id}`);
           setAlbum((prevAlbum)=>
@@ -89,7 +95,7 @@ const CardDetail = ({albumData}) => {
           );
           toast.success('Successfully Deleted!!!!');
         } catch (error) {
-            toast.error('Something error to delete!!!')
+            toast.error('Something error to delete!!!');
         }
 
       }
@@ -100,7 +106,9 @@ const CardDetail = ({albumData}) => {
                 <Album>Album {album[albumItem].userId}</Album>
                     <Span>ID {album[albumItem].id}</Span>
                     <Title style={{padding:"0px 25px", height:"90px"}}>{album[albumItem].title}</Title>
-                    <Buttondiv>
+
+                    {album.length> 1 && <>
+                        <Buttondiv>
                         <Button variant="contained"  onClick={()=>handleEdit(album[albumItem].title)}  >Edit</Button>
                         <Button variant="contained" onClick={()=>handleDelete(album[albumItem].id)}>Delete</Button>
                         <ToastContainer />
@@ -110,6 +118,8 @@ const CardDetail = ({albumData}) => {
                         <ChevronLeftOutlined style={{cursor:"pointer"}}  onClick={handleBack}/>
                         <ChevronRightOutlined style={{cursor:"pointer"}} onClick={handleNext}/>
                     </Arrow>
+                    </>}
+                    
             </> }
                     
                     {openEdit && <>
